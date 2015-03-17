@@ -88,11 +88,28 @@ def list():
     }
     return dict(data=data)
 
+# AddFolder
+@app.route(app_dir+'/addfolder')
+def addfolder():
+    #up.mkdir(request.GET.get('path'))
+    return None
+
 # Upload
 
 # Delete
+@app.route(app_dir+'/delete')
+def delete():
+    up.delete(request.GET.get('path'))
+    return None
 
 # Rename
+
+# Download
+@app.route(app_dir+'/download')
+def download():
+    uri = 'http://%s.b0.upaiyun.com%s' % (bucket, request.GET.get('path'))
+    print uri
+    return redirect(uri)
 
 # Load Static Files
 @app.route(app_dir+'/img/:filename')

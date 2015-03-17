@@ -47,6 +47,10 @@ $(document).ready(function() {
     });
   });
 
+  $('.addFile').on('click', function(event) {
+	thisRow = $('.table tr:first').after('<tr><td><img src="img/icons/folder.png" alt="folder"/></td><td></td><td></td></tr>');
+  });
+
 
   // renaming : disable renaming mode
   var disableRenaming = function(linkId) {
