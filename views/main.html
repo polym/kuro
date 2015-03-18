@@ -48,6 +48,11 @@
             </a>
         </div>
 
+		<form action="/jerry/upload" method="post" enctype="multipart/form-data">
+		  Select a file: <input type="file" name="upload" />
+		  <input type="submit" value="Start upload" />
+		</form>
+
         <table class="table">
             <tr>
                 <th style="width: 500px;">Name</th>
@@ -121,6 +126,7 @@
                     </div>
                 </div>
             </div>
+			<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="de
             %else:
             <form class="form-horizontal" action="{{ data['app_dir'] }}/login" method="POST">
                 <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">

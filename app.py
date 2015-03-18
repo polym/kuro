@@ -96,9 +96,14 @@ def addfolder():
     return None
 
 # Upload
-@app.route(app_dir+'/upload')
+@app.route(app_dir+'/upload', method='POST')
 def upload():
-    return None
+    upload_obj = request.files.get('upload')
+    path = request.GET.get('path')
+    os.remove('/tmp/mytmp')
+    upload_obj.save('/tmp/mytmp')
+    up.put(path, upload_obj.file)
+    return 'OK'
 
 # Delete
 @app.route(app_dir+'/delete')
