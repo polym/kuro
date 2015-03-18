@@ -91,10 +91,14 @@ def list():
 # AddFolder
 @app.route(app_dir+'/addfolder')
 def addfolder():
-    #up.mkdir(request.GET.get('path'))
+    print request.GET.get('path')
+    up.mkdir(request.GET.get('path'))
     return None
 
 # Upload
+@app.route(app_dir+'/upload')
+def upload():
+    return None
 
 # Delete
 @app.route(app_dir+'/delete')

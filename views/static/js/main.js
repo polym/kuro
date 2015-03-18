@@ -48,7 +48,29 @@ $(document).ready(function() {
   });
 
   $('.addFile').on('click', function(event) {
-	thisRow = $('.table tr:first').after('<tr><td><img src="img/icons/folder.png" alt="folder"/></td><td></td><td></td></tr>');
+    var str = '<tr><td><img src="img/icons/folder.png" alt="folder"/>'
+    str += '<a href="" id="hrefIdINF"></a>';
+    str += '<input id="inputIdINF" class="no-input" value="default"/></td><td></td><td></td></tr>';
+	thisRow = $('.table tr:first').after(str);
+    $('#inputIdINF').select();
+
+    $('#inputIdINF').focusout(function() {
+        $('#inputIdINF').attr('class', 'hidden');
+        $('#hrefIdINF').text($('#inputIdINF').val());
+        $.ajax({
+            url: "addfolder?path="+$('#d_title').text()+'/'+$('#hrefIdINF').text(),
+            context: document.body,
+            error: function(result, statut, error) {
+              // display message
+              displayAlertBox('<strong>Error!</strong> Could not make this directory in UPYUN')
+            },
+            complete: function(http_code, statut){
+              // after success/error : remove loading gif
+              location.reload();
+            }
+        });
+    });
+
   });
 
 
