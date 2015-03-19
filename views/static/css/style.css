@@ -16,3 +16,8 @@ span.overlay {
 .hidden {
   display: none;
 }
+
+.modal-large {
+  width: 800px;
+  height: 400px;
+}

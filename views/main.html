@@ -3,6 +3,7 @@
 <meta charset="utf-8"/>
 <title>File manager</title>
 <meta name="description" content="pyFileManager - Python web file manager">
+<link rel="stylesheet" href="css/fileinput.css" media="all" type="text/css" />
 <link rel="stylesheet" href="css/jquery.fancybox-2.1.5.pack.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/jquery.fancybox-buttons-1.0.5.pack.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/bootstrap.min-3.2.0.css">
@@ -11,6 +12,7 @@
 <script type="text/javascript" src="js/jquery.fancybox-2.1.5.pack.js"></script>
 <script type="text/javascript" src="js/jquery.fancybox-buttons-1.0.5.pack.js"></script>
 <script type="text/javascript" src="js/bootstrap.min-3.2.0.js"></script>
+<script type="text/javascript" src="js/fileinput.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
@@ -43,15 +45,10 @@
                 <span class="glyphicon glyphicon-folder-open" style="margin-left: 40px; margin-right:5px" title="Add Folder">
                 </span>
             </a>
-            <a href="upload" style="width: 100px">
+            <a href="#" style="width: 100px" data-toggle="modal" data-target='#uploadModal'>
                 <span class="glyphicon glyphicon-cloud-upload" title="Upload File"></span>
             </a>
         </div>
-
-		<form action="/jerry/upload" method="post" enctype="multipart/form-data">
-		  Select a file: <input type="file" name="upload" />
-		  <input type="submit" value="Start upload" />
-		</form>
 
         <table class="table">
             <tr>
@@ -126,7 +123,17 @@
                     </div>
                 </div>
             </div>
-			<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="de
+            <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-large">
+            <div class="modal-content modal-large">
+            <div class="modal-body modal-large">
+                <input id="upload-1" type="file" class="file" data-show-preview="false">
+                <script>
+                $("#upload-1").fileinput({
+                    uploadUrl: "{{ data['app_dir'] }}/upload?path="+$('#d_title').text(),
+                });
+                </script>
+            </div></div></div></div>
             %else:
             <form class="form-horizontal" action="{{ data['app_dir'] }}/login" method="POST">
                 <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">

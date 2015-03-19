@@ -165,5 +165,7 @@ $(document).ready(function() {
       }
     });
   });
-
+  $('#uploadModal').on('hidden.bs.modal', function () {
+      location.reload()
+  })
 });

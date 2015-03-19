@@ -91,19 +91,23 @@ def list():
 # AddFolder
 @app.route(app_dir+'/addfolder')
 def addfolder():
-    print request.GET.get('path')
     up.mkdir(request.GET.get('path'))
     return None
 
 # Upload
 @app.route(app_dir+'/upload', method='POST')
 def upload():
-    upload_obj = request.files.get('upload')
-    path = request.GET.get('path')
-    os.remove('/tmp/mytmp')
-    upload_obj.save('/tmp/mytmp')
-    up.put(path, upload_obj.file)
-    return 'OK'
+    upload_obj = request.files.file_data
+    path = request.GET.get('path') + '/'
+    fpath = path + upload_obj.filename
+    try:
+        os.remove('/tmp/mytmp')
+        upload_obj.save('/tmp/mytmp')
+        with open('/tmp/mytmp') as f:
+            up.put(fpath, f)
+    except:
+        pass
+    return None
 
 # Delete
 @app.route(app_dir+'/delete')
@@ -117,7 +121,6 @@ def delete():
 @app.route(app_dir+'/download')
 def download():
     uri = 'http://%s.b0.upaiyun.com%s' % (bucket, request.GET.get('path'))
-    print uri
     return redirect(uri)
 
 # Load Static Files
