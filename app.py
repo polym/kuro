@@ -75,7 +75,7 @@ def list():
     for k in range(len(slist)):
         column = {'id': k}
         column['fname'] = slist[k]['name']
-        column['ftype'] = fmttype(slist[k]['type'])
+        column['ftype'] = fmttype(slist[k]['type'], column['fname'])
         column['fsize'] = fmtsize(int(slist[k]['size']))
         column['ftime'] = fmttime(slist[k]['time'])
         column['fpath'] = join(path, column['fname'])
