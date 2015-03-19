@@ -74,17 +74,20 @@ def list():
     slist = sorted(rawData, key = lambda k : '%s %s' % (k['type'], k['time']))
     for k in range(len(slist)):
         column = {'id': k}
-        column['name'] = slist[k]['name']
-        column['type'] = fmttype(slist[k]['type'])
-        column['size'] = fmtsize(int(slist[k]['size']))
-        column['date'] = fmttime(slist[k]['time'])
-        column['path'] = join(path, column['name'])
+        column['fname'] = slist[k]['name']
+        column['ftype'] = fmttype(slist[k]['type'])
+        column['fsize'] = fmtsize(int(slist[k]['size']))
+        column['ftime'] = fmttime(slist[k]['time'])
+        column['fpath'] = join(path, column['fname'])
+        if column['ftype'] == 'folder':
+            column['href'] = '?path=' + column['fpath']
+        else:
+            column['href'] = 'http://%s.b0.upaiyun.com%s' % (bucket, column['fpath'])
         columns.append(column) 
 
     data = {
-        'title': path, 'list': columns, 'login': user, 'prev': dirname(path), \
+        'cwd': path, 'rowinfo': columns, 'login': user, 'pdir': dirname(path), \
         'password': passwd, 'isAdmin': isAdmin, 'error': error, 'app_dir': app_dir, \
-        's_path': s_path, 'bucket': bucket
     }
     return dict(data=data)
 
@@ -102,11 +105,14 @@ def upload():
     fpath = path + upload_obj.filename
     try:
         os.remove('/tmp/mytmp')
+    except:
+        pass
+    try:
         upload_obj.save('/tmp/mytmp')
         with open('/tmp/mytmp') as f:
             up.put(fpath, f)
-    except:
-        pass
+    except Exception as e:
+        print e
     return None
 
 # Delete

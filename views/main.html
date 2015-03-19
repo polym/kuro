@@ -27,7 +27,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#", style="width:100px", id='d_title'>{{ data['title'] }}</a>
+                <a class="navbar-brand" href="#", style="width:100px", id='d_title'>{{ data['cwd'] }}</a>
             </div>
             %if data['login'] and data['password']:
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -40,7 +40,7 @@
     </nav>
     <span id="alertMarker"></span>
     <div class="panel panel-default" id="main">
-        <div class="panel-heading">Browse files : {{ data['title'] }}
+        <div class="panel-heading">Browse files : {{ data['cwd'] }}
             <a href="#" style="background-size: 2100px 800px" class="addFile">
                 <span class="glyphicon glyphicon-folder-open" style="margin-left: 40px; margin-right:5px" title="Add Folder">
                 </span>
@@ -57,122 +57,124 @@
                 <th style="text-align:right">Size</th>
                 <th style="text-align:center">Modified</th>
             </tr>
-            %if data['title'] != '/':
+            %if data['cwd'] != '/':
             <tr id="fa">
                 <td>
                     <img src="img/icons/folder.png" alt="folder"/>
-                    <a href="?path={{ data['prev'] }}" data-fancybox-group="">..</a>
+                    <a href="?path={{ data['pdir'] }}" data-fancybox-group="">..</a>
                     <span class="overlay" style="float: right;"></span>
                 </td>
                 <td><td><td></td>
-             </tr>
-             %end
-             %for row in data['list']:
-            <tr id="{{ row['id'] }}">
+            </tr>
+            %end
+            %for row in data['rowinfo']:
+			%ftype, fname, fpath, fsize = row['ftype'], row['fname'], row['fpath'], row['fsize']
+			%id, href, ftime = row['id'], row['href'], row['ftime']
+            <tr id="{{ id }}">
                 <td>
-                    <img src="img/icons/{{ row['type'] }}.png" alt="{{ row['type'] }}"/>
-                    <%
-                    thisLink = '#'
-                    thisClass = ''
-                    thisFancyGroup = ''
-                    if row["type"] == 'folder':
-                    thisLink = '?path='+row['path']
-                    else:
-                    thisLink = 'http://%s.b0.upaiyun.com%s' % (data['bucket'], row['path'])
-                    end%>
-                    <a href="{{ thisLink }}" id="hrefId{{ row['id'] }}" class="{{ thisClass }}" data-fancybox-group="{{ thisFancyGroup }}">{{ row['name'] }}</a>
-                    <input id="inputId{{ row['id'] }}" class="hidden" value="{{ row['name'] }}" />
+                    <img src="img/icons/{{ ftype }}.png" alt="{{ ftype }}"/>
+                    <a href="{{ href }}" id="hrefId{{ id }}">{{ fname }}</a>
+                    <input id="inputId{{ id }}" class="hidden" value="{{ fname }}"/>
                     %if data['isAdmin']:
-                    <span class="overlay" style="float: right;" id="overlayId{{ row['id'] }}">
-                        <a href="#" class="renameElement" data-element-path="{{ row['path'] }}" data-link-id="Id{{ row['id'] }}"><span class="glyphicon glyphicon-edit" title="Rename"></span></a>
-                        %if row["type"] != 'folder':
-                        <a href="download?path={{ row['path'] }}"><span class="glyphicon glyphicon-cloud-download" title="Download"></span></a>
+                    <span class="overlay" style="float: right;" id="overlayId{{ id }}">
+                        <!--a href="#" class="renameElement" data-element-path="{{ fpath }}" data-link-id="Id{{ id }}">
+							<span class="glyphicon glyphicon-edit" title="Rename"></span>
+						</a-->
+                        %if ftype != 'folder':
+                        <a href="download?path={{ fpath }}">
+							<span class="glyphicon glyphicon-cloud-download" title="Download"></span>
+						</a>
                         %end
-                        <a href="#" data-toggle="modal" data-target="#deleteModal" data-line-id="{{ row['id'] }}" data-delete-file-path="{{ row['path'] }}">
+                        <a href="#" data-toggle="modal" data-target="#deleteModal" data-line-id="{{ id }}" data-delete-file-path="{{ fpath }}">
                             <span class="glyphicon glyphicon-trash" title="Remove"></span>
                         </a>
                     </span>
                     %end
                 </td>
                 <td align='right'>
-                    %if row["type"] != 'folder':
-                    {{ row['size'] }}
+                    %if ftype != 'folder':
+                    {{ fsize }}
                     %end
                 </td>
-                <td align='center'>{{ row['date'] }}</td>
+                <td align='center'>{{ ftime }}</td>
             </tr>
             %end
-         </table>
-            </div>
-            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title" id="deleteModalLabel">Are you sure ?</h4>
-                        </div>
-                        <div class="modal-body">
-                            Remove &laquo; <span id="fileName"></span> &raquo; ?
-                            <span class="hidden" id="lineId"></span>
-                            <span class="hidden" id="filePath"></span>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                            <button type="button" class="btn btn-danger" id="deleteFile">Yes</button>
-                        </div>
-                    </div>
+		</table>
+	</div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+                    <h4 class="modal-title" id="deleteModalLabel">Are you sure ?</h4>
+                </div>
+                <div class="modal-body">
+                    Remove &laquo; <span id="fileName"></span> &raquo; ?
+                    <span class="hidden" id="lineId"></span>
+                    <span class="hidden" id="filePath"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="deleteFile">Yes</button>
                 </div>
             </div>
-            <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-large">
-            <div class="modal-content modal-large">
-            <div class="modal-body modal-large">
-                <input id="upload-1" type="file" class="file" data-show-preview="false">
-                <script>
-                $("#upload-1").fileinput({
-                    uploadUrl: "{{ data['app_dir'] }}/upload?path="+$('#d_title').text(),
-                });
-                </script>
-            </div></div></div></div>
-            %else:
-            <form class="form-horizontal" action="{{ data['app_dir'] }}/login" method="POST">
-                <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <fieldset>
-                                <legend>Please sign in</legend>
-                                <div class="input-group" style="margin-bottom: 25px">
-                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    <input id="login" type="text" class="form-control" name="login" value="" placeholder="username">
-                                </div>
-                                <div class="input-group" style="margin-bottom: 25px">
-                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                    <input id="password" type="password" class="form-control" name="password" value="" placeholder="password">
-                                </div>
-
-                                %if data['error'] == 'badpass':
-                                <div class="alert alert-danger" role="alert">
-                                    <p><strong>Wrong password !</strong> Please try again.</p>
-                                </div>
-                                %end
-                                %if data['error'] == 'empty':
-                                <div class="alert alert-danger" role="alert">
-                                    <p><strong>Enter your username and password !</strong></p>
-                                </div>
-                                %end
-                                %if data['error'] == 'badlogin':
-                                <div class="alert alert-danger" role="alert">
-                                    <p><strong>Wrong login !</strong> Please try again.</p>
-                                </div>
-                                %end
-
-                                <button type="submit" class="btn btn-primary">Sign in</button>
-                            </fieldset>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            %end
         </div>
-        </body>
-        </html>
+	</div>
+    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    	<div class="modal-dialog modal-large">
+    		<div class="modal-content modal-large">
+    			<div class="modal-body modal-large">
+        			<input id="upload-1" type="file" class="file" data-show-preview="false">
+					<script>
+					$("#upload-1").fileinput({
+						uploadUrl: "{{ data['app_dir'] }}/upload?path="+$('#d_title').text(),
+					});
+					</script>
+    			</div>
+			</div>
+		</div>
+	</div>
+   %else:
+   <form class="form-horizontal" action="{{ data['app_dir'] }}/login" method="POST">
+       <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+           <div class="panel panel-default">
+               <div class="panel-body">
+                   <fieldset>
+                       <legend>Please sign in</legend>
+                       <div class="input-group" style="margin-bottom: 25px">
+                           <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                           <input id="login" type="text" class="form-control" name="login" value="" placeholder="username">
+                       </div>
+                       <div class="input-group" style="margin-bottom: 25px">
+                           <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                           <input id="password" type="password" class="form-control" name="password" value="" placeholder="password">
+                       </div>
+
+                       %if data['error'] == 'badpass':
+                       <div class="alert alert-danger" role="alert">
+                           <p><strong>Wrong password !</strong> Please try again.</p>
+                       </div>
+                       %end
+                       %if data['error'] == 'empty':
+                       <div class="alert alert-danger" role="alert">
+                           <p><strong>Enter your username and password !</strong></p>
+                       </div>
+                       %end
+                       %if data['error'] == 'badlogin':
+                       <div class="alert alert-danger" role="alert">
+                           <p><strong>Wrong login !</strong> Please try again.</p>
+                       </div>
+                       %end
+
+                       <button type="submit" class="btn btn-primary">Sign in</button>
+                   </fieldset>
+               </div>
+           </div>
+       </div>
+   </form>
+   %end
+</div>
+</body>
+</html>
